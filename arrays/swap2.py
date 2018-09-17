@@ -3,6 +3,7 @@
 import random
 import datetime
 from functools import reduce
+import numpy as np
 
 
 def reduce_sort(arr):
@@ -67,6 +68,37 @@ def fastest_sort(arr):
     return result
 
 
+def fastest_sort2(arr):
+    """
+    Using a tagged array for fast reference.
+
+    The given array is tagged in its current order,
+    then sorted efficiently with the default sort,
+    and finally re-ordering to its initial configuration
+    checking the tags and counting the swaps made.
+    :param arr:
+    :return:
+    """
+    print('fastest sort 2')
+    length = len(arr)
+    # Tag each element in the order it was received
+    tagged_arr = [[arr[i], i] for i in range(length)]
+    # Sort the array
+    tagged_arr.sort()
+    result = 0
+    result_prev = -1
+    # Return to the initial ordering checking the tags
+    while result != result_prev:
+        result_prev = result
+        for i in range(length):
+            if tagged_arr[i][1] != i:
+                temp = tagged_arr[tagged_arr[i][1]]
+                tagged_arr[tagged_arr[i][1]] = tagged_arr[i]
+                tagged_arr[i] = temp
+                result += 1
+    return result
+
+
 def select_sort(arr):
     print('select sort')
     swap = 0
@@ -105,7 +137,7 @@ def bubble_sort(arr):
 
 def merge_sort_count(org_arr):
 
-    print(org_arr)
+    #print(org_arr)
     tuple_arr = [[i, 0] for i in org_arr]
 
     def merge_sort(arr):
@@ -140,11 +172,11 @@ def merge_sort_count(org_arr):
                 j += 1
                 k += 1
 
-        print(arr)
+        #print(arr)
 
     merge_sort(tuple_arr)
     result = sum([i[1] > 0 for i in tuple_arr])
-    return result
+    return result, result / 2
 
 
 def diff_count(arr):
@@ -173,64 +205,56 @@ def position_track(arr):
     length = len(arr)
     tarr = [[arr[i], i] for i in range(length)]
     tarr.sort()
-    swaps = sorted([[tarr[i][1], i] for i in range(length) if i != tarr[i][1]])
-    temp_swaps = []
-    final_swaps = []
-    print(swaps)
-    result = 0
+    swaps = [sorted([tarr[i][1], i]) for i in range(length) if i != tarr[i][1]]
+    flat_swaps = [i for swap in swaps for i in swap]
+    #print(flat_swaps)
 
-    def independent_swaps(sw_arr):
-        flat_list = [position for swap in sw_arr for position in swap]
-        return len(flat_list) == len(set(flat_list))
+    def get_swap_count(swaps, count=0, x=None, y=None):
+        if not swaps:
+            return count
+        if not x:
+            x = swaps.pop(0)
+            y = swaps.pop(0)
+        remaining = set(swaps)
+        x1 = None
+        y1 = None
+        #print('looking for {}'.format(x))
+        if x in remaining:
+            count += 1
+            if len(swaps) == 2:
+                return count
+            x1_index = swaps.index(x)
+            #print('Found {0} at {1}'.format(x, x1_index))
+            if x1_index == len(swaps) - 1:
+                x1 = swaps.pop(-1)
+                y1 = swaps.pop(-1)
+            elif x1_index % 1:
+                x1 = swaps.pop(x1_index - 1)
+                y1 = swaps.pop(x1_index - 1)
+            else:
+                x1 = swaps.pop(x1_index)
+                y1 = swaps.pop(x1_index)
+        #print('looking for {}'.format(y))
+        elif y in remaining:
+            count += 1
+            if len(swaps) <= 2:
+                return count
+            y1_index = swaps.index(y)
+            #print('Found {0} at {1}'.format(y, y1_index))
+            if y1_index == len(swaps) - 1:
+                x1 = swaps.pop(-1)
+                y1 = swaps.pop(-1)
+            elif y1_index % 1:
+                x1 = swaps.pop(y1_index - 1)
+                y1 = swaps.pop(y1_index - 1)
+            else:
+                x1 = swaps.pop(y1_index)
+                y1 = swaps.pop(y1_index)
+        #print("Count: {0}\nRemaining:\n{1}".format(count, len(swaps)//2))
+        return get_swap_count(swaps, count, x=x1, y=y1)
 
-    while not independent_swaps(swaps.copy()):
-        i = 0
-        while i < len(swaps) - 1:
-            if swaps[i] == swaps[i+1]:
-                #swaps[i] = swaps[i+1] = [0, 0]
-                result += 1
-                final_swaps.append(swaps[i])
-                i += 2
-                continue
-            if swaps[i][0] == swaps[i+1][0]:
-                temp_swaps.append([swaps[i][1], swaps[i+1][1]])
-                final_swaps.append([swaps[i]])
-                #swaps[i] = swaps[i+1] = [0, 0]
-                result += 1
-                i += 2
-                continue
-            if swaps[i][1] == swaps[i+1][1]:
-                temp_swaps.append([swaps[i][0], swaps[i+1][0]])
-                final_swaps.append([swaps[i]])
-                #swaps[i] = swaps[i+1] = [0, 0]
-                result += 1
-                i += 2
-                continue
-            if swaps[i][0] == swaps[i+1][1]:
-                temp_swaps.append([swaps[i][1], swaps[i+1][0]])
-                final_swaps.append([swaps[i]])
-                #swaps[i] = swaps[i+1] = [0, 0]
-                result += 1
-                i += 2
-                continue
-            if swaps[i][1] == swaps[i+1][0]:
-                temp_swaps.append([swaps[i][0], swaps[i+1][1]])
-                final_swaps.append([swaps[i]])
-                #swaps[i] = swaps[i+1] = [0, 0]
-                result += 1
-                i += 2
-                continue
-            temp_swaps.append(swaps[i])
-            i += 1
-        #swaps = [i for i in swaps if i != [0, 0]]
-        swaps = temp_swaps.copy()
-        temp_swaps.clear()
-        #print("final {}".format(final_swaps))
-        #print("pendi {}".format(swaps))
-
-    final_swaps += swaps
-    print(final_swaps)
-    return len(final_swaps)
+    result = get_swap_count(flat_swaps)
+    return result
 
 
 def rand_array(length, swaps):
@@ -266,7 +290,7 @@ if __name__ == '__main__':
     start = datetime.datetime.now()
 
     print('\nGenerating array')
-    length = 10
+    length = 100000
     ra = rand_array_free(length, length//2)
     print(ra)
     print(datetime.datetime.now() - start)
@@ -277,15 +301,20 @@ if __name__ == '__main__':
     print(datetime.datetime.now() - start)
     start = datetime.datetime.now()
 
+    #print('\n')
+    #print(fastest_sort(ra.copy()))
+    #print(datetime.datetime.now() - start)
+    #start = datetime.datetime.now()
+
     print('\n')
-    print(fastest_sort(ra.copy()))
+    print(fastest_sort2(ra.copy()))
     print(datetime.datetime.now() - start)
     start = datetime.datetime.now()
 
-    print('\n')
-    print(position_track(ra.copy()))
-    print(datetime.datetime.now() - start)
-    start = datetime.datetime.now()
+    #print('\n')
+    #print(position_track(ra.copy()))
+    #print(datetime.datetime.now() - start)
+    #start = datetime.datetime.now()
 
     #print('\n')
     #print(select_sort(ra.copy()))
