@@ -97,14 +97,27 @@ def attempt3fast(q):
     return
 
 
-def attempt21(q):
+def merge_sort_count(q):
+    """
+    Count the number of queue jumps as we rearrange with a merge sort.
 
+    Quick check first to make sure it is not too chaotic.
+    """
+    # Check if too chaotic
+    tarr = sorted([[q[i], i] for i in range(len(q))])
+    for i in range(len(q)):
+        if tarr[i][1] < i - 2:
+            print("Too chaotic")
+            return
+
+    # Tag the array to keep count of jumps
     tagged_q = [[i, 0] for i in q]
     for i in range(len(tagged_q)):
         if tagged_q[i][0] - i - 1 > 2:
             print("Too chaotic")
             return
 
+    # Merge sort function
     def merge_sort(q):
 
         if len(q) == 1:
@@ -117,7 +130,7 @@ def attempt21(q):
             if a[0][0] < b[0][0]:
                 sorted_q.append(a.pop(0))
             else:
-                a[0][1] += 1
+                b[0][1] += len(a)
                 sorted_q.append(b.pop(0))
 
         if a:
@@ -127,6 +140,7 @@ def attempt21(q):
 
         return sorted_q
 
+    # Sort and count
     sorted_q = merge_sort(tagged_q)
     result = 0
     for i in sorted_q:
@@ -184,26 +198,26 @@ if __name__ == '__main__':
         #start = datetime.datetime.now()
 
         #print('\n')
-        attempt3(arr.copy())
+        merge_sort_count(arr.copy())
         #print(datetime.datetime.now() - start)
         start = datetime.datetime.now()
 
 
     print('\nGenerating array')
-    length = 10000
-    ra = rand_array(length, 1003)
+    length = 100000
+    ra = rand_array(length, 4004)
     print(datetime.datetime.now() - start)
     start = datetime.datetime.now()
 
-    attempt3(ra.copy())
-    print(datetime.datetime.now() - start)
-    start = datetime.datetime.now()
+    #attempt3(ra.copy())
+    #print(datetime.datetime.now() - start)
+    #start = datetime.datetime.now()
 
-    attempt3fast(ra.copy())
-    print(datetime.datetime.now() - start)
-    start = datetime.datetime.now()
+    #attempt3fast(ra.copy())
+    #print(datetime.datetime.now() - start)
+    #start = datetime.datetime.now()
 
-    attempt21(ra.copy())
+    merge_sort_count(ra.copy())
     print(datetime.datetime.now() - start)
     start = datetime.datetime.now()
 
