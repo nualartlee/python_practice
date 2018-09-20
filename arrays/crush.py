@@ -6,17 +6,17 @@ import random
 import re
 import sys
 import fileinput
+import datetime
 
 
 # Complete the arrayManipulation function below.
 def arrayManipulation(n, queries):
-    arr = [0 for _ in range(n)]
-    for query in queries:
-        new_arr = arr[:query[0]]
-        new_arr += map(lambda x: x + query[2], arr[query[0]:query[1]+1])
-        new_arr += arr[query[1] + 1:]
-        arr = new_arr
-    return max(arr)
+    for i in range(len(sorted(queries)) - 1):
+        if set(range(queries[i][0], queries[i][1]+1)).intersection(set(range(queries[i+1][0], queries[i+1][1]+1))):
+            queries[i+1][2] += queries[i][2]
+
+    maximum = max([i[2] for i in queries])
+    return maximum
 
 
 if __name__ == '__main__':
@@ -41,3 +41,17 @@ if __name__ == '__main__':
     print(result)
     #fptr.write(str(result) + '\n')
     #fptr.close()
+
+start = datetime.datetime.now()
+n = 10**5
+m = 10**4
+ops = []
+for i in range(m):
+    op = random.sample(range(n), 2)
+    op.append(random.randint(1, 10**9))
+    ops.append(op)
+
+print(datetime.datetime.now() - start)
+start = datetime.datetime.now()
+print(arrayManipulation(n, ops))
+print(datetime.datetime.now() - start)
