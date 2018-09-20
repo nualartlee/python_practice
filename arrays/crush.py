@@ -11,11 +11,25 @@ import datetime
 
 # Complete the arrayManipulation function below.
 def arrayManipulation(n, queries):
-    for i in range(len(sorted(queries)) - 1):
-        if set(range(queries[i][0], queries[i][1]+1)).intersection(set(range(queries[i+1][0], queries[i+1][1]+1))):
-            queries[i+1][2] += queries[i][2]
 
-    maximum = max([i[2] for i in queries])
+    queries = sorted([[i[0], i[1], i[2], i[2]] for i in queries])
+    length = len(queries)
+
+    i = 0
+    while i < length - 1:
+        # Check intersection in the sorted queries
+        adder = 0
+        j = i + 1
+        while j < length:
+            if queries[i][1] >= queries[j][0]:
+                adder += queries[j-1][2]
+                queries[j][3] += adder
+            else:
+                break
+            j += 1
+        i = j
+
+    maximum = max([query[3] for query in queries])
     return maximum
 
 
@@ -43,8 +57,8 @@ if __name__ == '__main__':
     #fptr.close()
 
 start = datetime.datetime.now()
-n = 10**5
-m = 10**4
+n = 10**7
+m = 2*10**5
 ops = []
 for i in range(m):
     op = random.sample(range(n), 2)
