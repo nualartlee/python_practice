@@ -12,24 +12,39 @@ import datetime
 # Complete the arrayManipulation function below.
 def arrayManipulation(n, queries):
 
-    queries = sorted([[i[0], i[1], i[2], i[2]] for i in queries])
-    length = len(queries)
+    intersects = []
 
-    i = 0
-    while i < length - 1:
-        # Check intersection in the sorted queries
-        adder = 0
-        j = i + 1
-        while j < length:
-            if queries[i][1] >= queries[j][0]:
-                adder += queries[j-1][2]
-                queries[j][3] += adder
+    # Check intersection in the sorted queries
+    while queries:
+        queries = sorted(queries)
+        print(len(queries))
+
+        # Only one operation left
+        if len(queries) == 1:
+            intersects.append(queries.pop(0)[2])
+            break
+
+        # First intersects with second
+        if queries[0][1] >= queries[1][0]:
+
+            # First overlaps second
+            if queries[0][1] >= queries[1][1]:
+                queries[0][0] = queries[1][1] + 1
+                queries[1][2] += queries[0][2]
+                continue
+
+            # Second extends beyond first
             else:
-                break
-            j += 1
-        i = j
+                queries[0][0] = queries[1][0]
+                queries[0][2] += queries[1][2]
+                queries[1][0] = queries[0][1] + 1
+                continue
 
-    maximum = max([query[3] for query in queries])
+        # First does not intersect second
+        else:
+            intersects.append(queries.pop(0)[2])
+
+    maximum = max(intersects)
     return maximum
 
 
@@ -58,10 +73,11 @@ if __name__ == '__main__':
 
 start = datetime.datetime.now()
 n = 10**7
-m = 2*10**5
+m = 2*10**3
 ops = []
 for i in range(m):
     op = random.sample(range(n), 2)
+    op = sorted(op)
     op.append(random.randint(1, 10**9))
     ops.append(op)
 
