@@ -12,23 +12,41 @@ import datetime
 # Complete the arrayManipulation function below.
 def arrayManipulation(n, queries):
 
+    # Sort the queries according to span endpoints
+    def sort_by_second(x):
+        return x[1]
+
+    queries.sort(key=sort_by_second)
     sums = []
-    splits = {0}
-    queries = sorted(queries)
 
-    for q in queries:
-        splits.add(q[0])
-        splits.add(q[1])
+    # For each of the sorted queries, test to find intersections
+    i = 0
+    while i < len(queries) - 1:
 
-    for i in splits:
-        sum = 0
-        for q in queries:
-            if q[0] <= i <= q[1]:
-                sum += q[2]
+        # Start with the query value
+        sum = queries[i][2]
+
+        # For each subsequent query...
+        j = i + 1
+        while j < len(queries):
+
+            # ...if it intersects, add the values
+            if queries[i][1] >= queries[j][0]:
+                sum += queries[j][2]
+                j += 1
+
+            # ...else skip to next non-tested query
+            else:
+                j -= 1
+                break
+        if j > i:
+            i = j
+        else:
+            i += 1
         sums.append(sum)
 
-    maximum = max(sums)
-    return maximum
+    # Return the maximum of the possible sums
+    return max(sums)
 
 
 if __name__ == '__main__':
@@ -56,7 +74,7 @@ if __name__ == '__main__':
 
 start = datetime.datetime.now()
 n = 10**7
-m = 2*10**4
+m = 2*10**5
 ops = []
 for i in range(m):
     op = random.sample(range(n), 2)
