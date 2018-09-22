@@ -45,6 +45,8 @@ def arrayManipulation(n, queries):
             i += 1
         sums.append(sum)
 
+    print(len(sums))
+
     # Return the maximum of the possible sums
     return max(sums)
 
