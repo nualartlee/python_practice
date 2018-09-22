@@ -12,39 +12,22 @@ import datetime
 # Complete the arrayManipulation function below.
 def arrayManipulation(n, queries):
 
-    intersects = []
+    sums = []
+    splits = {0}
+    queries = sorted(queries)
 
-    # Check intersection in the sorted queries
-    while queries:
-        queries = sorted(queries)
-        print(len(queries))
+    for q in queries:
+        splits.add(q[0])
+        splits.add(q[1])
 
-        # Only one operation left
-        if len(queries) == 1:
-            intersects.append(queries.pop(0)[2])
-            break
+    for i in splits:
+        sum = 0
+        for q in queries:
+            if q[0] <= i <= q[1]:
+                sum += q[2]
+        sums.append(sum)
 
-        # First intersects with second
-        if queries[0][1] >= queries[1][0]:
-
-            # First overlaps second
-            if queries[0][1] >= queries[1][1]:
-                queries[0][0] = queries[1][1] + 1
-                queries[1][2] += queries[0][2]
-                continue
-
-            # Second extends beyond first
-            else:
-                queries[0][0] = queries[1][0]
-                queries[0][2] += queries[1][2]
-                queries[1][0] = queries[0][1] + 1
-                continue
-
-        # First does not intersect second
-        else:
-            intersects.append(queries.pop(0)[2])
-
-    maximum = max(intersects)
+    maximum = max(sums)
     return maximum
 
 
@@ -73,7 +56,7 @@ if __name__ == '__main__':
 
 start = datetime.datetime.now()
 n = 10**7
-m = 2*10**3
+m = 2*10**4
 ops = []
 for i in range(m):
     op = random.sample(range(n), 2)
