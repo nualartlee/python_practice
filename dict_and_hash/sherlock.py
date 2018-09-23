@@ -21,10 +21,18 @@ def sherlockAndAnagrams(s):
         for j in range(len(s_list) - i):
 
             # Check if the subset exists in the remaining string
-            if set(s_list[j:j + i]).issubset(set(s_list[j+1:])):
-                # For each subset of characters starting at k
-                for k in range(j + 1, len(s_list) - i + 1):
-                    result += sorted(s_list[j:j + i]) == sorted(s_list[k:k + i])
+            if not set(s_list[j:j + i]).issubset(set(s_list[j+1:])):
+                continue
+
+            # For each subset of characters starting at k
+            for k in range(j + 1, len(s_list) - i + 1):
+
+                # Add if there is a match
+                result += sorted(s_list[j:j + i]) == sorted(s_list[k:k + i])
+
+                # Check if the subset exists in the remaining string
+                if not set(s_list[j:j + i]).issubset(set(s_list[k+1:])):
+                    break
 
     return result
 
