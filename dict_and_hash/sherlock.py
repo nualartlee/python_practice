@@ -16,18 +16,20 @@ def sherlockAndAnagrams(s):
 
     # For each possible number of characters i
     for i in range(1, len(s_list)):
-        print("Checking {} chars:".format(i))
-        print(s_list)
+        #print("Checking {} chars:".format(i))
+        #print(s_list)
 
         # For each subset of i characters starting at j
-        for j in range(len(s_list) - i -1):
+        for j in range(len(s_list) - i):
+            #print("j: {}".format(j))
 
             # For each subset of characters starting at k
-            for k in range(j+1, len(s_list) - i):
-                print("{0} ==== {1}".format(set(s_list[j:j+i]), set(s_list[k:k+i])))
-                if set(s_list[j:j+i]) == set(s_list[k:k+i]):
+            for k in range(j+1, len(s_list) - i + 1):
+                #print("k: {}".format(k))
+                #print("{0} ==== {1}".format(sorted(s_list[j:j+i]), sorted(s_list[k:k+i])))
+                if sorted(s_list[j:j+i]) == sorted(s_list[k:k+i]):
                     result += 1
-                    print("Result: {}".format(result))
+                    #print("Result: {}".format(result))
     return result
 
 
@@ -40,3 +42,6 @@ if __name__ == '__main__':
         result = sherlockAndAnagrams(line)
         print(result)
 
+    s = 'shdfuytwqeuigvsdfjkhiuwteriugshjdvcjhsgyuftweiufjkxvgxhgviusgfsiudwggfiusytiwehjvcsjgeyrgefhwegwfgefvjshdjsadn'
+    print(len(s))
+    print(sherlockAndAnagrams(s))
