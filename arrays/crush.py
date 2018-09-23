@@ -12,19 +12,47 @@ import datetime
 # Complete the arrayManipulation function below.
 def arrayManipulation(n, queries):
 
-    # Sort the queries according to span endpoints
-    def sort_by_second(x):
-        return x[1]
-
-    queries.sort(key=sort_by_second)
     sums = []
+
+    ## Sort the queries according to span endpoints
+    #queries = sorted([[q[1], q[0], q[2]] for q in queries])
+    #queries = [[q[1], q[0], q[2]] for q in queries]
+
+    ## For each of the sorted queries, test to find intersections
+    #i = 0
+    #while i < len(queries) - 1:
+
+    #    # Start with the query value
+    #    sum = queries[i][2]
+
+    #    # For each subsequent query...
+    #    j = i + 1
+    #    while j < len(queries):
+
+    #        # ...if it intersects, add the values
+    #        if queries[i][1] >= queries[j][0]:
+    #            sum += queries[j][2]
+    #            j += 1
+
+    #        # ...else skip to next non-tested query
+    #        else:
+    #            j -= 1
+    #            break
+    #    if j > i:
+    #        i = j
+    #    else:
+    #        i += 1
+    #    sums.append(sum)
+
+    # Sort the queries according to span startpoints
+    queries = sorted(queries)
 
     # For each of the sorted queries, test to find intersections
     i = 0
     while i < len(queries) - 1:
 
         # Start with the query value
-        sum = queries[i][2]
+        intersection_sum = queries[i][2]
 
         # For each subsequent query...
         j = i + 1
@@ -32,7 +60,12 @@ def arrayManipulation(n, queries):
 
             # ...if it intersects, add the values
             if queries[i][1] >= queries[j][0]:
-                sum += queries[j][2]
+                intersection_sum += queries[j][2]
+                if intersection_sum >= 2490686975:
+                    print(intersection_sum)
+                    for q in queries[j:j+3]:
+                        print(q)
+                    import pdb;pdb.set_trace()
                 j += 1
 
             # ...else skip to next non-tested query
