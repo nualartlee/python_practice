@@ -10,14 +10,24 @@ import fileinput
 
 # Complete the sherlockAndAnagrams function below.
 def sherlockAndAnagrams(s):
-    s_list = [i for i in s]
-    s_set = set(s_list)
-    duplicates = len(s_list) - len(s_set)
-    f = math.factorial
+    #s_list = [i for i in s.strip()]
+    s_list = s.strip()
     result = 0
-    for i in range(duplicates):
-        result += f(duplicates) // f(i)
 
+    # For each possible number of characters i
+    for i in range(1, len(s_list)):
+        print("Checking {} chars:".format(i))
+        print(s_list)
+
+        # For each subset of i characters starting at j
+        for j in range(len(s_list) - i -1):
+
+            # For each subset of characters starting at k
+            for k in range(j+1, len(s_list) - i):
+                print("{0} ==== {1}".format(set(s_list[j:j+i]), set(s_list[k:k+i])))
+                if set(s_list[j:j+i]) == set(s_list[k:k+i]):
+                    result += 1
+                    print("Result: {}".format(result))
     return result
 
 
@@ -26,7 +36,7 @@ if __name__ == '__main__':
     file_in = fileinput.input()
     lines = int(file_in[0])
 
-    for i in range(lines):
-        result = sherlockAndAnagrams(file_in[i])
+    for line in file_in:
+        result = sherlockAndAnagrams(line)
         print(result)
 
