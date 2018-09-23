@@ -6,30 +6,26 @@ import random
 import re
 import sys
 import fileinput
+from datetime import datetime
 
 
 # Complete the sherlockAndAnagrams function below.
 def sherlockAndAnagrams(s):
-    #s_list = [i for i in s.strip()]
     s_list = s.strip()
     result = 0
 
     # For each possible number of characters i
     for i in range(1, len(s_list)):
-        #print("Checking {} chars:".format(i))
-        #print(s_list)
 
         # For each subset of i characters starting at j
         for j in range(len(s_list) - i):
-            #print("j: {}".format(j))
 
-            # For each subset of characters starting at k
-            for k in range(j+1, len(s_list) - i + 1):
-                #print("k: {}".format(k))
-                #print("{0} ==== {1}".format(sorted(s_list[j:j+i]), sorted(s_list[k:k+i])))
-                if sorted(s_list[j:j+i]) == sorted(s_list[k:k+i]):
-                    result += 1
-                    #print("Result: {}".format(result))
+            # Check if the subset exists in the remaining string
+            if set(s_list[j:j + i]).issubset(set(s_list[j+1:])):
+                # For each subset of characters starting at k
+                for k in range(j + 1, len(s_list) - i + 1):
+                    result += sorted(s_list[j:j + i]) == sorted(s_list[k:k + i])
+
     return result
 
 
@@ -38,10 +34,21 @@ if __name__ == '__main__':
     file_in = fileinput.input()
     lines = int(file_in[0])
 
+    start = datetime.now()
     for line in file_in:
         result = sherlockAndAnagrams(line)
         print(result)
+    print(datetime.now() - start)
 
-    s = 'shdfuytwqeuigvsdfjkhiuwteriugshjdvcjhsgyuftweiufjkxvgxhgviusgfsiudwggfiusytiwehjvcsjgeyrgefhwegwfgefvjshdjsadn'
+    # 100: 807
+    s = 'shdfuytwqeuigvsdfugshjdvcjhsgyuftweiufjkxvgxhgviusgfsiudwggfiusytiwehjvcsjgeyrgefhwegwfgefvjshdjsadn'
     print(len(s))
-    print(sherlockAndAnagrams(s))
+    start = datetime.now()
+    #print(sherlockAndAnagrams(s))
+    print(datetime.now() - start)
+    # 150: 1485
+    s = 'shdfuytwqeuigvsdfosaiiutixviuwxneyrrcweolxzwoeiuycitbxweyrcybufwgxyugshjdvcjhsgyuftweiufjkxvgxhgviusgfsiudwggfiusytiwehjvcsjgeyrgefhwegwfgefvjshdjsadn'
+    print(len(s))
+    start = datetime.now()
+    #print(sherlockAndAnagrams(s))
+    print(datetime.now() - start)
